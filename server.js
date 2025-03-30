@@ -10,10 +10,12 @@ const { Config } = require("./src/config/index")
 
 const app = express()
 
-app.use(cors({
-  origin: Config.cors_origin, // Soporta múltiples entornos
-  credentials: true // Permite cookies y autenticación si se requiere
-}));
+// app.use(cors({
+//   origin: Config.cors_origin, // Soporta múltiples entornos
+//   credentials: true // Permite cookies y autenticación si se requiere
+// }));
+app.use(cors({ origin: "*" }));
+
 
 // Middleware de BodyParser para JSON y datos grandes
 app.use(bodyParser.json({limit: '150mb'}));
