@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-06f239dc2703bfeb6 # Reemplaza con una AMI de Amazon Linux 2
+      InstanceType: t3.micro
+      SecurityGroupIds:
+        - !Ref SecurityGroup
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install -y nodejs
+          sudo npm install -g npm
+          git clone https://github.com/lpb21/btgPactualBack /home/ec2-user/app
+          cd /home/ec2-user/app
+          echo "PORT=3000" > .env
+          echo "MONGO_URI=mongodb+srv://user_admin:pruebasbtg01@cluster0.no1rxay.mongodb.net/miBaseDeDatos?retryWrites=true&w=majority" >> .env
+          echo "CORS_ORIGIN=http://localhost:5173" >> .env
+          echo "EMAIL_USER=btgpactualpruebas@gmail.com" >> .env
+          echo "EMAIL_PASS_APP=rjbk vraa bosr vhhj" >> .env
+          echo "TWILIO_SID=AC10c34433e28bd9e2d6317e638c4f0cd3" >> .env
+          echo "TWILIO_AUTH_TOKEN=ce7ac93e61b6145cb31828a5c8525cb3" >> .env
+          echo "TWILIO_PHONE=+16802054019" >> .env
+          npm install
+          npm start
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Permite trafico HTTP y SSH"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3000 # O el puerto que use tu aplicación
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
