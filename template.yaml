@@ -3,38 +3,50 @@ Resources:
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-06f239dc2703bfeb6 # Reemplaza con una AMI de Amazon Linux 2
+      ImageId: ami-06f239dc2703bfeb6  # Reemplaza con una AMI de Windows Server
       InstanceType: t3.micro
+      KeyName: "btgClaves"
       SecurityGroupIds:
         - !Ref SecurityGroup
       UserData:
         Fn::Base64: |
-          #!/bin/bash
-          sudo yum update -y
-          sudo yum install -y nodejs
-          sudo npm install -g npm
-          git clone https://github.com/lpb21/btgPactualBack /home/ec2-user/app
-          cd /home/ec2-user/app
-          echo "PORT=3000" > .env
-          echo "MONGO_URI=mongodb+srv://user_admin:pruebasbtg01@cluster0.no1rxay.mongodb.net/miBaseDeDatos?retryWrites=true&w=majority" >> .env
-          echo "CORS_ORIGIN=http://localhost:5173" >> .env
-          echo "EMAIL_USER=btgpactualpruebas@gmail.com" >> .env
-          echo "EMAIL_PASS_APP=rjbk vraa bosr vhhj" >> .env
-          echo "TWILIO_SID=AC10c34433e28bd9e2d6317e638c4f0cd3" >> .env
-          echo "TWILIO_AUTH_TOKEN=ce7ac93e61b6145cb31828a5c8525cb3" >> .env
-          echo "TWILIO_PHONE=+16802054019" >> .env
+          <powershell>
+          # Instalar Node.js
+          Invoke-WebRequest -Uri https://nodejs.org/dist/v16.14.0/node-v16.14.0-x64.msi -OutFile C:\node.msi
+          Start-Process msiexec.exe -ArgumentList '/i C:\node.msi /quiet' -Wait
+          # Instalar Git
+          Invoke-WebRequest -Uri https://git-scm.com/download/win -OutFile C:\git.exe
+          Start-Process C:\git.exe -ArgumentList '/SILENT' -Wait
+          # Clonar repositorio
+          git clone https://github.com/lpb21/btgPactualBack C:\app
+          cd C:\app
+          # Crear archivo .env
+          "PORT=3000" | Out-File .env
+          "MONGO_URI=mongodb+srv://user_admin:pruebasbtg01@cluster0.no1rxay.mongodb.net/miBaseDeDatos?retryWrites=true&w=majority" | Out-File .env -Append
+          "CORS_ORIGIN=http://localhost:5173" | Out-File .env -Append
+          "EMAIL_USER=btgpactualpruebas@gmail.com" | Out-File .env -Append
+          "EMAIL_PASS_APP=rjbk vraa bosr vhhj" | Out-File .env -Append
+          "TWILIO_SID=AC10c34433e28bd9e2d6317e638c4f0cd3" | Out-File .env -Append
+          "TWILIO_AUTH_TOKEN=ce7ac93e61b6145cb31828a5c8525cb3" | Out-File .env -Append
+          "TWILIO_PHONE=+16802054019" | Out-File .env -Append
+          # Instalar dependencias y ejecutar la aplicación
           npm install
           npm start
+          </powershell>
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: "Permite trafico HTTP y SSH"
+      GroupDescription: "Permite trafico HTTP, SSH y RDP"
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: 3000 # O el puerto que use tu aplicación
+          FromPort: 3000
           ToPort: 3000
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
           CidrIp: 0.0.0.0/0

@@ -27,6 +27,10 @@ connectDB();
 // Rutas principales
 app.use('/v1', routes)
 
+app.get('/', (req, res) => {
+  res.send('¡Hola desde mi aplicación Node.js!');
+});
+
 app.use((req, res) => {
   res.status(404).json({
     error: "Not Found",
