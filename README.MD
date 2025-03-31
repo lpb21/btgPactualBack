@@ -198,11 +198,20 @@ Este backend está configurado para ser desplegado en AWS mediante **EC2** y **S
     pass: pruebasbtg01
    ```
    * Cuenta Twilio
-   - Para registrar su numero ir al siguiente link: https://console.twilio.com/us1/develop/phone-numbers/manage/verified
+   Para registrar su numero ir al siguiente link: https://console.twilio.com/us1/develop/phone-numbers/manage/verified
 ```sh
     user: btgpactualpruebas@gmail.com
     pass: Pruebasbtg01*
    ```
+      
+      * Servidor BackEnd AWS
+```sh
+    IP: 52.14.73.100
+    user: Administrator
+    pass: sxQ2IU&!15.713*f-55hgLG!*?mYpokt
+   ```
+
+   
 
 ## 🛠️ Contribución
 
