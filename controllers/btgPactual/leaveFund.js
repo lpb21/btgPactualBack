@@ -16,6 +16,27 @@ const leaveFund = async (req, res) => {
         return res.status(400).json({ message: "El usuario no está en este fondo." });
       }
 
+        let enabledSus = await Transaction.find({
+            user: userId,
+            fund: fundId,
+            type: "apertura"
+        });
+
+        const numEnablesSus = enabledSus.length;
+
+        let canceledSus = await Transaction.find({
+            user: userId,
+            fund: fundId,
+            type: "cancelacion"
+        })
+
+        const numCanceledSus = canceledSus.length;
+
+        //Valida que el numero de suscripciones activas sean mayores al numero que tiene el usuario canceladas
+        if(numCanceledSus >= numEnablesSus){
+            return res.status(400).json({ message: "No se puede cancelar mas de las suscripciones que el usuario....."})
+        }
+
       // 2️⃣ Registrar la transacción de cancelación
       const cancelTransaction = new Transaction({
         usuario: userId,
